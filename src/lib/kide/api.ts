@@ -1,14 +1,11 @@
 /**
- * Frontend API client — calls the Railway backend instead of Kide.app directly.
- *
- * No more Tauri imports, no more axios, no more direct kide.app calls.
- * Everything goes through the backend proxy.
+ * Frontend API client — all requests go through the backend.
  */
 import type {
   EventResponse,
   ReserveResponse,
   ValidateTokenResponse,
-  DeobfuscateResponse,
+  BackendStatusResponse,
   EventFeatures,
   ScorerResponse,
   ScanResponse,
@@ -17,7 +14,9 @@ import type {
   TikettiEventsResponse,
   TikettiEventResponse,
   TikettiReserveResponse,
+  TikettiBrowserBuyResponse,
 } from './types'
+import type { TikettiBrowserSSEEvent } from './types'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
@@ -79,21 +78,21 @@ export async function addToCart(
 }
 
 /**
- * Trigger a refresh of the anti-bot deobfuscated values on the backend.
+ * Check backend readiness and warm up session.
  */
-export async function fetchExtraProperties(): Promise<DeobfuscateResponse> {
-  return apiCall<DeobfuscateResponse>('/api/deobfuscate', {})
+export async function fetchExtraProperties(): Promise<BackendStatusResponse> {
+  return apiCall<BackendStatusResponse>('/api/deobfuscate', {})
 }
 
 /**
- * Score a batch of events for resell potential via the backend AI scorer.
+ * Score a batch of events for resell potential.
  */
 export async function scoreEvents(events: EventFeatures[]): Promise<ScorerResponse> {
   return apiCall<ScorerResponse>('/api/score', { events })
 }
 
 /**
- * Scan Kide.app events by city, auto-extract features, and score them.
+ * Scan events by city, extract features, and score them.
  */
 export async function scanCity(city: string): Promise<ScanResponse> {
   return apiCall<ScanResponse>('/api/scan', { city, productType: 1 })
@@ -174,7 +173,7 @@ export async function fetchTikettiEvents(adminToken: string, city?: string): Pro
 }
 
 /**
- * Trigger manual Tiketti scrape (admin only).
+ * Trigger manual event refresh (admin only).
  */
 export async function triggerTikettiScrape(adminToken: string): Promise<{ success: boolean; scraped: number; upserted: number }> {
   const url = `${API_URL}/api/tiketti/scrape`
@@ -216,4 +215,87 @@ export async function addToTikettiCart(
     quantity,
     sessionCookie,
   })
+}
+
+// ─── Tiketti Browser Automation API ─────────────────────────────────────────
+
+/**
+ * Start a Playwright browser session for a Tiketti event.
+ * Returns an EventSource-like reader that streams status updates via SSE.
+ * The browser navigates to the event, handles Queue-it, and parks ready to buy.
+ */
+export function startTikettiBrowserSession(
+  eventUrl: string,
+  quantity: number,
+  onEvent: (event: TikettiBrowserSSEEvent) => void,
+  onError: (error: string) => void,
+): AbortController {
+  const controller = new AbortController()
+  const url = `${API_URL}/api/tiketti/browser/session`
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventUrl, quantity }),
+    signal: controller.signal,
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
+        onError((err as Record<string, string>).error || 'Failed to start browser session')
+        return
+      }
+
+      const reader = response.body?.getReader()
+      if (!reader) {
+        onError('No SSE stream from server')
+        return
+      }
+
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6)) as TikettiBrowserSSEEvent
+              onEvent(data)
+            } catch {
+              // Malformed SSE line, skip
+            }
+          }
+        }
+      }
+    })
+    .catch((err) => {
+      if (err instanceof Error && err.name === 'AbortError') return
+      onError(err instanceof Error ? err.message : 'Network error')
+    })
+
+  return controller
+}
+
+/**
+ * Trigger the buy action on an active browser session.
+ */
+export async function triggerTikettiBrowserBuy(
+  sessionId: string,
+): Promise<TikettiBrowserBuyResponse> {
+  return apiCall<TikettiBrowserBuyResponse>('/api/tiketti/browser/buy', { sessionId })
+}
+
+/**
+ * Close a browser session.
+ */
+export async function closeTikettiBrowserSession(sessionId: string): Promise<void> {
+  const url = `${API_URL}/api/tiketti/browser/session/${sessionId}`
+  await fetch(url, { method: 'DELETE' }).catch(() => {})
 }

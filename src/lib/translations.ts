@@ -8,10 +8,9 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     
     // Steps
     step1: 'Event',
-    step2: 'Delay',
-    step3: 'Keywords',
-    step4: 'Summary',
-    step5: 'Monitor',
+    step2: 'Settings',
+    step3: 'Summary',
+    step4: 'Monitor',
 
     // Step 0 - Event Configuration
     chooseEventSource: 'Choose event source',
@@ -59,17 +58,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     tokenGuideNote: 'Note: Your token expires periodically. If it stops working, repeat these steps to get a fresh one.',
     tokenGuideClose: 'Got it',
 
-    // Step 1 - Delay Configuration
-    setRefreshDelay: 'Set refresh delay',
+    // Step 1 - Settings
+    setRefreshDelay: 'Configure settings',
     pollInterval: 'Poll interval (milliseconds)',
+    fallbackMode: 'Try other tickets if selected is unavailable',
+    fallbackModeHint: 'If enabled, the bot will attempt to buy any available ticket type when your selected variant is sold out.',
 
-    // Step 2 - Keywords
-    filterByKeywords: 'Filter by keywords',
-    keywordsInput: 'Keywords (comma separated)',
-    keywordsPlaceholder: 'vappu, tampere',
-    requireAllKeywords: 'Require all keywords to match',
-
-    // Step 3 - Summary
+    // Step 2 - Summary
     summary: 'Summary',
     eventUrlLabel: 'Event URL',
     authTokenLabel: 'Auth token',
@@ -77,15 +72,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     quantityLabel: 'Quantity',
     estimatedTotalLabel: 'Estimated total',
     delayLabel: 'Delay',
-    keywordsLabel: 'Keywords',
-    noKeywordFilter: 'No keyword filter',
-    matchModeLabel: 'Match mode',
-    matchModeAll: 'All keywords',
-    matchModeAny: 'Any keyword',
+    fallbackLabel: 'Fallback',
+    fallbackEnabled: 'Enabled — will try other tickets',
+    fallbackDisabled: 'Disabled — selected ticket only',
     proxyLabel: 'Proxy',
     directConnection: 'Direct connection',
 
-    // Step 4 - Monitor
+    // Step 3 - Monitor
     monitor: 'Monitor',
     statusLabel: 'Status',
     matchesFoundLabel: 'Matches found',
@@ -136,11 +129,11 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     howItWorks: 'How It Works',
     howItWorksText: 'Kidehiiri monitors Kide.app for event availability and automatically adds tickets to your cart when they go on sale. You then complete the checkout manually.',
     authentication: 'Authentication',
-    authenticationText: 'Your Bearer token is used to authenticate with the Kide.app API. Never share it with anyone. The app only sends requests to the backend server which proxies to api.kide.app.',
+    authenticationText: 'Your Bearer token is used to authenticate with Kide.app. Never share it with anyone. The app sends requests through a secure backend server.',
     pollingInterval: 'Polling Interval',
     pollingIntervalText: 'The app checks for availability every N milliseconds (default: 1200ms). Minimum recommended: 200ms.',
-    keywordFilter: 'Keyword Filter',
-    keywordFilterText: 'Filter by ticket type names. Use AND logic to require all keywords, or OR logic to match any keyword.',
+    fallbackModeTitle: 'Fallback Mode',
+    fallbackModeText: 'When enabled, if your selected ticket type is unavailable the bot will automatically try to buy any other available ticket for the same event.',
     statusIndicators: 'Status Indicators',
     statusNotChecked: 'Not checked: Token hasn\'t been validated yet',
     statusValid: 'Valid: Token is active and authenticated',
@@ -202,14 +195,14 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     scorerPaused: 'Paused',
     scorerFavorites: 'favorites',
 
-    // AI Reranker
+    // AI Scoring
     scorerAiView: 'AI Grouped',
     scorerAiBuy: 'BUY',
     scorerAiMaybe: 'MAYBE',
     scorerAiSkip: 'SKIP',
     scorerAiConfidence: 'AI Confidence',
     scorerAiModelVersion: 'Model version',
-    scorerAiUnavailable: 'AI reranker unavailable — showing heuristic scores only',
+    scorerAiUnavailable: 'AI scoring unavailable — showing heuristic scores only',
 
     // Event detail (expanded)
     ticketOptions: 'Ticket Options',
@@ -297,17 +290,33 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     tikettiSniperTicketsFree: 'tickets free',
     tikettiSniperWaiting: 'Waiting for sale',
     tikettiSniperNoVariants: 'No ticket types found on this page',
-    tikettiSniperHowItWorks: 'This monitor polls tiketti.fi for ticket availability. When tickets appear, it will try to add them to your cart automatically (if you provide cookies), and alert you with a sound + link.',
+    tikettiSniperHowItWorks: 'This monitor polls tiketti.fi for ticket availability. When tickets appear, it will try to add them to your cart automatically using the selected method, and alert you with a sound + link.',
     tikettiSniperQtyLabel: 'Quantity',
-    tikettiSniperCookieLabel: 'Browser cookies (optional)',
+    tikettiSniperCookieLabel: 'Browser cookies',
     tikettiSniperCookiePlaceholder: 'CookieConsent=...; QueueITAccepted-...=...; wwwtikettifi=...',
-    tikettiSniperCookieHint: 'Open DevTools (F12) → Application → Cookies → tiketti.fi. Copy each cookie as Name=Value and join with semicolons. Include all QueueIT and session cookies. Without cookies, you\'ll just get a sound alert.',
+    tikettiSniperCookieHint: 'Open DevTools (F12) → Application → Cookies → tiketti.fi. Copy each cookie as Name=Value and join with semicolons. Include all QueueIT and session cookies.',
     tikettiSniperDelayLabel: 'Interval (ms)',
     tikettiSniperStartBtn: 'Start monitoring',
     tikettiSniperStopBtn: 'Stop',
     tikettiSniperSuccessAlert: '🎉 Tickets are available! Open tiketti.fi now to buy them before they sell out.',
     tikettiSniperGoToTiketti: '🎫 Open on tiketti.fi →',
     tikettiSniperLogsTitle: 'Activity log',
+
+    // Tiketti Browser Automation
+    tikettiCartMode: 'Cart method',
+    tikettiBrowserMode: 'Browser Automation',
+    tikettiCookieMode: 'Cookie Mode',
+    tikettiBrowserModeHint: 'A headless browser navigates to the event page, passes Queue-it, and clicks "Add to cart" when tickets appear. No cookies needed!',
+    tikettiCookieModeHint: 'Uses your browser cookies to call tiketti.fi\'s internal cart API directly. You need to copy cookies from DevTools.',
+    tikettiBrowserPrewarm: 'Pre-warm browser session',
+    tikettiBrowserStatus_launching: 'Launching...',
+    tikettiBrowserStatus_navigating: 'Navigating...',
+    'tikettiBrowserStatus_queue-it': 'In Queue-it...',
+    tikettiBrowserStatus_ready: 'Ready',
+    tikettiBrowserStatus_buying: 'Adding to cart...',
+    tikettiBrowserStatus_success: 'Success!',
+    tikettiBrowserStatus_failed: 'Failed',
+    tikettiBrowserStatus_closed: 'Closed',
 
     // Coming Soon section
     comingSoonTitle: 'Coming Soon',
@@ -351,10 +360,9 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     
     // Steps
     step1: 'Tapahtuma',
-    step2: 'Viive',
-    step3: 'Avainsanat',
-    step4: 'Yhteenveto',
-    step5: 'Monitoroi',
+    step2: 'Asetukset',
+    step3: 'Yhteenveto',
+    step4: 'Monitoroi',
 
     // Step 0 - Event Configuration
     chooseEventSource: 'Valitse tapahtuman lähde',
@@ -402,17 +410,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     tokenGuideNote: 'Huomio: Tokenisi vanhenee ajoittain. Jos se lakkaa toimimasta, toista nämä vaiheet saadaksesi uuden.',
     tokenGuideClose: 'Selvä',
 
-    // Step 1 - Delay Configuration
-    setRefreshDelay: 'Aseta päivitysviive',
+    // Step 1 - Settings
+    setRefreshDelay: 'Määritä asetukset',
     pollInterval: 'Kyselyn väli (millisekuntia)',
+    fallbackMode: 'Kokeile muita lippuja jos valittu ei ole saatavilla',
+    fallbackModeHint: 'Kun päällä, botti yrittää ostaa minkä tahansa saatavilla olevan lipputyypin jos valitsemasi on loppuunmyyty.',
 
-    // Step 2 - Keywords
-    filterByKeywords: 'Suodata avainsanoilla',
-    keywordsInput: 'Avainsanat (pilkulla erotettu)',
-    keywordsPlaceholder: 'vappu, tampere',
-    requireAllKeywords: 'Vaadi kaikkien avainsanojen vastaavuus',
-
-    // Step 3 - Summary
+    // Step 2 - Summary
     summary: 'Yhteenveto',
     eventUrlLabel: 'Tapahtuman URL',
     authTokenLabel: 'Valtuutustoken',
@@ -420,15 +424,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     quantityLabel: 'Määrä',
     estimatedTotalLabel: 'Arvioidut kokonaiskustannukset',
     delayLabel: 'Viive',
-    keywordsLabel: 'Avainsanat',
-    noKeywordFilter: 'Ei avainsanasuodinta',
-    matchModeLabel: 'Vastaavuustila',
-    matchModeAll: 'Kaikki avainsanat',
-    matchModeAny: 'Mikä tahansa avainsana',
+    fallbackLabel: 'Varaläpi',
+    fallbackEnabled: 'Päällä — kokeilee muita lippuja',
+    fallbackDisabled: 'Pois — vain valittu lippu',
     proxyLabel: 'Proxy',
     directConnection: 'Suora yhteys',
 
-    // Step 4 - Monitor
+    // Step 3 - Monitor
     monitor: 'Monitoroi',
     statusLabel: 'Tila',
     matchesFoundLabel: 'Löydetyt vastaavuudet',
@@ -479,11 +481,11 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     howItWorks: 'Kuinka se toimii',
     howItWorksText: 'Kidehiiri valvoo kide.app:ia tapahtumien saatavuuden osalta ja lisää liput automaattisesti ostoskoriin niiden tultua myynnille. Tämän jälkeen voit tehdä kaupan itse.',
     authentication: 'Tunnistaminen',
-    authenticationText: 'Bearer-tokenia käytetään kide.app API:n kanssa todentamiseen. Älä koskaan jaa sitä kenelle tahansa. Sovellus lähettää pyynnöt palvelimen kautta api.kide.app:iin.',
+    authenticationText: 'Bearer-tokenia käytetään kide.app:n kanssa todentamiseen. Älä koskaan jaa sitä kenelle tahansa. Sovellus lähettää pyynnöt turvallisen palvelimen kautta.',
     pollingInterval: 'Kyselyväli',
     pollingIntervalText: 'Sovellus tarkistaa saatavuuden N millisekunnin välein (oletus: 1200ms). Suositeltu minimi: 200ms.',
-    keywordFilter: 'Avainsanasuodatin',
-    keywordFilterText: 'Suodata lipun tyyppinimillä. Käytä AND-logiikkaa kaikkien avainsanojen vaatimiseen tai OR-logiikkaa minkä tahansa avainsanan vastaavuuteen.',
+    fallbackModeTitle: 'Varaläpitila',
+    fallbackModeText: 'Kun päällä, jos valitsemasi lipputyyppi ei ole saatavilla, botti yrittää automaattisesti ostaa minkä tahansa muun saatavilla olevan lipun samaan tapahtumaan.',
     statusIndicators: 'Tilaindikaattorit',
     statusNotChecked: 'Ei tarkistettu: Tokenia ei ole vielä vahvistettu',
     statusValid: 'Kelvollinen: Token on aktiivinen ja autentikoitu',
@@ -544,14 +546,14 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     scorerTriggerBot: 'Snippaa tämä',
     scorerNoResults: 'Ei tuloksia vielä. Valitse kaupunki ja klikkaa Skannaa tapahtumat.',
 
-    // AI Reranker
+    // AI Scoring
     scorerAiView: 'AI-ryhmittely',
     scorerAiBuy: 'OSTA',
     scorerAiMaybe: 'EHKÄ',
     scorerAiSkip: 'OHITA',
     scorerAiConfidence: 'AI-luottamus',
     scorerAiModelVersion: 'Mallin versio',
-    scorerAiUnavailable: 'AI-uudelleenarvioija ei käytettävissä — näytetään vain heuristiset pisteet',
+    scorerAiUnavailable: 'AI-pisteytys ei käytettävissä — näytetään vain heuristiset pisteet',
 
     // Event detail (expanded)
     ticketOptions: 'Lipputyypit',
@@ -639,17 +641,33 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     tikettiSniperTicketsFree: 'lippua vapaana',
     tikettiSniperWaiting: 'Odottaa myyntiä',
     tikettiSniperNoVariants: 'Lipputyyppejä ei löytynyt sivulta',
-    tikettiSniperHowItWorks: 'Tämä seuranta pollaa tiketti.fi:tä lippujen saatavuudesta. Kun lippuja löytyy, se yrittää lisätä ne ostoskoriin automaattisesti (jos annat evästeet), ja ilmoittaa äänellä + linkillä.',
+    tikettiSniperHowItWorks: 'Tämä seuranta pollaa tiketti.fi:tä lippujen saatavuudesta. Kun lippuja löytyy, se yrittää lisätä ne ostoskoriin automaattisesti valitulla menetelmällä, ja ilmoittaa äänellä + linkillä.',
     tikettiSniperQtyLabel: 'Määrä',
-    tikettiSniperCookieLabel: 'Selaimen evästeet (valinnainen)',
+    tikettiSniperCookieLabel: 'Selaimen evästeet',
     tikettiSniperCookiePlaceholder: 'CookieConsent=...; QueueITAccepted-...=...; wwwtikettifi=...',
-    tikettiSniperCookieHint: 'Avaa DevTools (F12) → Application → Cookies → tiketti.fi. Kopioi jokainen eväste muodossa Nimi=Arvo ja yhdistä puolipisteillä. Sisällytä kaikki QueueIT- ja sessioevästeet. Ilman evästeitä saat vain äänihälytyksen.',
+    tikettiSniperCookieHint: 'Avaa DevTools (F12) → Application → Cookies → tiketti.fi. Kopioi jokainen eväste muodossa Nimi=Arvo ja yhdistä puolipisteillä. Sisällytä kaikki QueueIT- ja sessioevästeet.',
     tikettiSniperDelayLabel: 'Väli (ms)',
     tikettiSniperStartBtn: 'Käynnistä seuranta',
     tikettiSniperStopBtn: 'Pysäytä',
     tikettiSniperSuccessAlert: '🎉 Lippuja on saatavilla! Avaa tiketti.fi nyt ja osta ne ennen kuin ne myydään loppuun.',
     tikettiSniperGoToTiketti: '🎫 Avaa tiketti.fi →',
     tikettiSniperLogsTitle: 'Toimintaloki',
+
+    // Tiketti Browser Automation
+    tikettiCartMode: 'Ostoskorimenetelmä',
+    tikettiBrowserMode: 'Selainautomaatio',
+    tikettiCookieMode: 'Evästetila',
+    tikettiBrowserModeHint: 'Piilotettu selain navigoi tapahtuman sivulle, ohittaa Queue-it-jonon ja klikkaa "Lisää ostoskoriin" automaattisesti kun lippuja ilmestyy. Ei vaadi evästeitä!',
+    tikettiCookieModeHint: 'Käyttää selaimen evästeitäsi tiketti.fi:n sisäiseen ostoskori-API:in. Sinun täytyy kopioida evästeet DevToolsista.',
+    tikettiBrowserPrewarm: 'Esilämmitä selainistunto',
+    tikettiBrowserStatus_launching: 'Käynnistetään...',
+    tikettiBrowserStatus_navigating: 'Navigoidaan...',
+    'tikettiBrowserStatus_queue-it': 'Queue-it-jonossa...',
+    tikettiBrowserStatus_ready: 'Valmis',
+    tikettiBrowserStatus_buying: 'Lisätään ostoskoriin...',
+    tikettiBrowserStatus_success: 'Onnistui!',
+    tikettiBrowserStatus_failed: 'Epäonnistui',
+    tikettiBrowserStatus_closed: 'Suljettu',
 
     // Coming Soon section
     comingSoonTitle: 'Tulossa',

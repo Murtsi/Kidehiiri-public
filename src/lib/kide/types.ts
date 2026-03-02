@@ -46,10 +46,8 @@ export type ValidateTokenResponse = {
   }
 }
 
-export type DeobfuscateResponse = {
-  hash: string | null
-  headerKey: string | null
-  extractedAt: string
+export type BackendStatusResponse = {
+  ready: boolean
   cached: boolean
 }
 
@@ -57,7 +55,7 @@ export type DeobfuscateResponse = {
 
 export type SalesStatus = 'upcoming' | 'on_sale' | 'selling_fast' | 'almost_sold_out' | 'paused' | 'sold_out' | 'ended'
 
-// ─── AI Reranker (ML model) Types ────────────────────────────────────────────
+// ─── AI Score Types ──────────────────────────────────────────────────────────
 
 export type AiScore = {
   label: 'BUY' | 'MAYBE' | 'SKIP'
@@ -236,4 +234,36 @@ export type TikettiEventResponse = {
 export type TikettiReserveResponse = {
   success: boolean
   message: string
+}
+
+// ─── Tiketti Browser Automation Types ────────────────────────────────────────
+
+export type TikettiBrowserSessionStatus =
+  | 'launching'
+  | 'navigating'
+  | 'queue-it'
+  | 'ready'
+  | 'buying'
+  | 'success'
+  | 'failed'
+  | 'closed'
+
+export type TikettiBrowserSSEEvent = {
+  sessionId: string
+  status: TikettiBrowserSessionStatus
+  message: string
+  done?: boolean
+}
+
+export type TikettiBrowserBuyResponse = {
+  success: boolean
+  message: string
+}
+
+export type TikettiBrowserSessionInfo = {
+  id: string
+  eventId: string
+  status: TikettiBrowserSessionStatus
+  statusMessage: string
+  createdAt: number
 }
