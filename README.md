@@ -9,24 +9,19 @@
 
 ## Features
 
-### Ticket Sniper (Kide.app)
+### Ticket Sniper
 - 5-step wizard: Event → Delay → Keywords → Summary → Monitor
 - Real-time polling with configurable interval (200ms–5s)
 - Automatic cart action the instant tickets become available
 - Token validation with expiry check
 - Keyword filtering for specific ticket types
 
-### Ticket Sniper (Tiketti.fi)
-- Same sniping flow adapted for Tiketti.fi events
-- Session cookie authentication
-- Availability polling with auto-buy
-
 ### AI Event Scorer
 - Scan events by Finnish city
 - Heuristic scoring engine (popularity, demand, pricing, timing, organiser)
 - Optional ML reranker (BUY / MAYBE / SKIP with confidence bars)
 - Grouped card view with expandable feature breakdowns
-- City picker with popular + all Finnish cities
+- City picker with all Finnish cities
 
 ### UI
 - Mobile-first responsive design
@@ -71,7 +66,7 @@ The `vercel.json` includes rewrite rules to proxy `/api/*` requests during devel
 
 ```
 src/
-├── App.tsx              # Main app — tabs, sniper logic, scorer
+├── App.tsx              # Main app — sniper logic, scorer
 ├── App.css              # Full responsive styles
 ├── components/
 │   ├── CityPicker.tsx   # City selector with search
